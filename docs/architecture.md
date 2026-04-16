@@ -1,0 +1,109 @@
+# Architecture
+
+## Overview
+
+The Well is a static site generated from YAML, served from Cloudflare's edge. A small Cloudflare Workers API handles writes — contributions, corrections, and account operations. Public reads never touch a database.
+
+```
+┌──────────────────┐        ┌──────────────────┐
+│  Visitor browser │  HTML  │ Cloudflare edge  │
+│                  │◀───────│ (static assets)  │
+└────────┬─────────┘        └──────────────────┘
+         │                           ▲
+         │ POST /api/*               │ Astro build
+         ▼                           │
+┌──────────────────┐        ┌────────┴─────────┐
+│ Contribution     │        │ GitHub Actions   │
+│ Worker (CF)      │        │ deploy pipeline  │
+└────┬────┬────────┘        └──────────────────┘
+     │    │                          ▲
+     │    └──▶ Clerk (identity)      │
+     │                               │ YAML diff
+     ▼                               │
+┌──────────────────┐        ┌────────┴─────────┐
+│ D1: contributions│        │ Repo: data/*.yaml│
+└──────────────────┘        └──────────────────┘
+┌──────────────────┐
+│ D1: identity     │ ◀── separate credentials, separate DB
+└──────────────────┘
+```
+
+## Components
+
+### Static site (`site/`)
+
+Astro. Every judge page, court page, and index is pre-rendered at build time from YAML under `data/`. The deployment artifact is a directory of static HTML, CSS, and JS served by Cloudflare Pages or R2.
+
+**Rationale.** Static hosting is cheap, cacheable, and eliminates an entire class of runtime vulnerabilities. The read path has no database, no auth check, no per-request compute.
+
+### Contribution Worker (`worker/`)
+
+A Cloudflare Worker that handles all writes:
+
+- New observations from authenticated contributors.
+- Correction proposals.
+- Account operations (deletion requests, contributor applications).
+
+The Worker is the only production code path that writes to a database. It is rate-limited at the edge and gated by a Clerk session check.
+
+### Identity (Clerk + D1)
+
+Clerk handles sign-up, sign-in, password reset, and session management. The minimum authentication data — email, hashed credentials, 2FA state, session timestamps — lives at Clerk. See [`auth.md`](./auth.md).
+
+A separate Cloudflare D1 database (`IDENTITY_DB`) holds the application-side identity record: a random per-user identifier, a link to the Clerk user ID, contributor reputation, and moderation flags. This database does not hold contribution content.
+
+### Contributions (D1)
+
+A second Cloudflare D1 database (`PUBLIC_DB`) holds contribution content: observation text, citations, the judge the observation pertains to, submission timestamp, moderation state. It holds a random identifier that can be joined to the identity database, but it does not store email, IP, or anything else identifying.
+
+Separation is enforced by:
+
+- Different D1 bindings in the Worker.
+- Different credentials for operational access.
+- No query in any code path joins across both databases.
+
+### Data (`data/`)
+
+YAML files, one per judge. Every fact is accompanied by a citation. Changes are reviewed via pull request. Licensed under CC-BY-SA 4.0.
+
+### Scrapers (`scrapers/`)
+
+Python (managed with [`uv`](https://docs.astral.sh/uv/)). Pull publicly available court data — published opinions, dockets, scheduling orders — and propose YAML updates as pull requests. Scrapers never write directly to the production site; they generate PRs that maintainers review.
+
+Scrapers are rules-based (regex + structural parsing). LLMs are not part of the extraction path. See [CONTRIBUTING.md](../CONTRIBUTING.md#hard-rule-no-ailllm-in-the-extraction-path).
+
+## Data flow: visitor loads a judge page
+
+1. Browser requests `https://thewell.law/j/casd/some-judge`.
+2. Cloudflare's edge serves the pre-rendered HTML from cache. On cold cache, it fetches from the static origin. **No D1 query, no Worker invocation, no Clerk call.**
+3. The page contains no third-party scripts. No analytics beacon fires. The visitor's presence is not recorded anywhere The Well controls.
+
+## Data flow: contributor submits an observation
+
+1. Contributor navigates to the submission page — a static asset.
+2. Client-side JS calls Clerk to establish a session. Clerk returns a short-lived JWT whose private claims include a `contribution_key_hash` (derived at account-creation time from a pepper + random salt).
+3. Contributor fills out the form and submits. The browser POSTs to the contribution Worker with the JWT.
+4. Worker verifies the JWT against Clerk's JWKS. On success, the Worker:
+   - Reads `contribution_key_hash` from the JWT.
+   - Writes the contribution to `PUBLIC_DB`, keyed by that hash. **Does not query `IDENTITY_DB`.**
+   - Applies rate limiting by hash via KV.
+   - Returns a receipt.
+5. The contribution enters a moderation queue. Moderators review it through a separate authenticated UI.
+6. Once approved, the observation is merged into the relevant YAML file as a PR (generated by a scheduled job), reviewed, and released in the next build.
+
+## Build and release
+
+GitHub Actions on merge to `main`:
+
+1. Schema validation across `data/`.
+2. Site and scraper tests.
+3. Astro build.
+4. Deploy static assets to Cloudflare.
+
+See `.github/workflows/deploy.yml`.
+
+## Why this shape
+
+- **Public-interest integrity.** A well-funded adversary compelled to surface contributor identity should only be able to surface the minimum the system retains. A static read path and a segregated write path keep the attack surface small.
+- **Operational simplicity.** A static site is easier to reason about, cheaper to run, and harder to break than a server-rendered application.
+- **Cost.** A project sustained by small donations cannot afford per-request database reads at scale. Cloudflare static hosting and D1 fit the budget.
