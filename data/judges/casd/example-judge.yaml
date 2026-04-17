@@ -1,0 +1,36 @@
+# Placeholder judge record so the site has something to render before the
+# scraper pipeline is live. Replace or remove once real records land.
+slug: example-judge
+jurisdiction: casd
+court: U.S. District Court, Southern District of California
+name: Example Judge
+honorific: Hon.
+title: District Judge
+city: San Diego
+status: active
+appointed: "2010-01-01"
+updated: "2026-04-17"
+profile_url: https://www.casd.uscourts.gov/judges
+standing_orders: []
+facts:
+  filing:
+    courtesy_copies_required:
+      value: false
+      source:
+        type: primary
+        title: Placeholder — replace with real citation
+    page_limits_motion:
+      value: 25
+      source:
+        type: primary
+        title: Placeholder — replace with real citation
+  motions:
+    motions_in_limine_deadline:
+      value: 14 days before trial
+  oral_argument:
+    default_policy:
+      value: By request
+  technology:
+    remote_hearings:
+      value: Permitted for non-evidentiary matters
+  other: {}

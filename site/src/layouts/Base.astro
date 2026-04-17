@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description = 'An open-source database of judicial procedure.',
+  canonical,
+  jsonLd,
+} = Astro.props;
+
+const siteName = 'The Well';
+const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="robots" content="index,follow" />
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header
+      class="border-b"
+      style="border-color: var(--color-rule)"
+      data-print-hide
+    >
+      <div class="max-w-3xl mx-auto px-6 py-6 flex items-baseline justify-between">
+        <a href="/" class="font-sans font-semibold text-lg no-underline" style="color: var(--color-fg)">
+          The Well
+        </a>
+        <nav class="font-sans text-sm">
+          <a href="/j/" class="mr-4">Judges</a>
+          <a href="/about/" class="mr-4">About</a>
+          <a href="/contribute/">Contribute</a>
+        </nav>
+      </div>
+    </header>
+    <main class="flex-1 max-w-3xl w-full mx-auto px-6 py-10">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
