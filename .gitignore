@@ -15,3 +15,10 @@ site/dist/
 scrapers/*/.cache/
 *.sqlite
 *.db
+
+# Local agent and tool state (not project-related)
+.remember/
+.aider*
+.continue/
+.cursor/
+.devin/
