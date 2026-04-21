@@ -1,53 +1,68 @@
 # Contributing to The Well
 
-Thank you for considering a contribution. This is a public-interest project; the quality and integrity of what we publish matters.
+Thank you for considering a contribution. The Well is a public-interest project, and the integrity of what we publish depends on the integrity of what comes in. Read this document before opening a PR.
 
-## Ways to contribute
+## Editorial line
 
-- **Data corrections** — Tell us when a judge's record is wrong. File a `data_correction` issue, or open a PR against the relevant YAML file with a citation.
-- **Observations** — First-hand courtroom observations (scheduling patterns, motion handling, etc.). Submit through the site once contribution intake is live.
-- **Jurisdiction requests** — Ask for a court we don't yet cover. File a `jurisdiction_request` issue.
-- **Code** — Scrapers, site improvements, tooling. See the setup below.
-- **Documentation** — Anything under `docs/` is fair game.
+These are the principles that govern what we accept and what we refuse.
 
-## Anonymity
+1. The Well publishes factual, sourced information about judicial procedure. We do not publish opinions or temperament commentary.
+2. Contributor identity is architecturally unlinkable from contributions. PRs that add logging, analytics, session tracking, user identifiers on contribution endpoints, or anything that weakens unlinkability will be closed.
+3. No AI in the data pipeline. Extractors are regex + parsing.
+4. Every fact on the site has a source.
 
-You can contribute pseudonymously. Read [`docs/anonymity.md`](./docs/anonymity.md) first so you understand what that actually guarantees and what it doesn't.
+## Adding a new jurisdiction
 
-- **Git commits**: use a pseudonymous name and a protected email (GitHub `noreply` works).
-- **Data submissions**: the contribution flow is designed so that identity is separable from content. See [`docs/architecture.md`](./docs/architecture.md) and [`docs/threat-model.md`](./docs/threat-model.md).
-- **High-risk contributors** (court employees, etc.): read [`docs/anonymity.md`](./docs/anonymity.md) and contact us via the channel in [SECURITY.md](./SECURITY.md) *before* you submit anything.
+New jurisdictions live as their own directory under `scrapers/`. Shared utilities live under `scrapers/common/`:
 
-## Ground rules
+- `scrapers/common/extractors.py` — regex and parsing primitives for standing orders, calendars, and dockets.
+- `scrapers/common/normalize.py` — canonicalization helpers (judge names, dates, case numbers).
+- `scrapers/common/http.py` — rate-limited fetcher with polite-crawler defaults.
 
-- **Every factual claim needs a citation.** Primary sources (court records, published opinions, official schedules, standing orders) are strongly preferred. Second-hand accounts are accepted but flagged.
-- **No speculation, no editorializing.** The Well records what happens, not what we think of it.
-- **No identifying information about litigants, witnesses, or jurors** unless it is already in the public record.
-- **Respect the [Code of Conduct](./CODE_OF_CONDUCT.md).**
+To add a jurisdiction:
 
-## Hard rule: no AI/LLM in the extraction path
+1. File a `jurisdiction_request` issue so we can coordinate and avoid duplication.
+2. Create `scrapers/<jurisdiction>/` with an entry point and a README describing the source system (court website, docket API, opinion repository).
+3. Reuse `scrapers/common/` wherever possible. If you need to extend a common helper, open a separate PR for that change.
+4. Generate YAML under `data/<jurisdiction>/` and submit as a PR. Every fact needs a citation, per principle 4.
 
-Scrapers, extractors, and the contribution-validation pipeline **must not** use large language models or any AI-based inference to produce, classify, or rewrite data values. Extraction is rules-based: regex, structural parsing, deterministic normalization.
+## Improving extractors
 
-The reason is auditability. Every fact in `data/` must trace to a specific excerpt in a specific source document via a reproducible rule. An LLM's output cannot be reproduced or audited in that way, and a hallucinated procedural rule is worse than a missing one.
+Open a PR against `scrapers/common/extractors.py` or the relevant jurisdiction extractor. Every change must:
 
-LLMs are acceptable for:
+- Include a test that fails on `main` and passes with the change.
+- Include the source document or an excerpt under `scrapers/<jurisdiction>/tests/fixtures/`.
+- Preserve determinism. If the output depends on ordering or ambient state, the extractor is broken.
 
-- Suggesting review for human moderators (clearly labeled).
-- Writing documentation, commit messages, and non-data code.
-- Developer tooling that does not touch `data/`.
+## Correcting a judge card
+
+Two paths:
+
+1. **Open an issue** with the `data-correction` label. Include the judge URL on our site, the field you believe is wrong, the correct value, and a citation.
+2. **Open a PR** directly against the YAML under `data/`. Cite every changed field. Primary sources — published standing orders, docket entries, official calendars — are strongly preferred. Secondary sources are accepted but flagged.
+
+Citations are non-negotiable. A correction without a source is indistinguishable from a rumor.
+
+## What we will not merge
+
+- PRs that add analytics, telemetry, session tracking, or any code that logs user behavior on contribution endpoints.
+- PRs that introduce an LLM or any AI inference into the extraction or contribution-validation path.
+- Data changes without citations.
+- Opinion or temperament commentary.
+- Identifying information about litigants, witnesses, or jurors beyond what already appears in the public record.
+- Changes that weaken the architectural separation between identity and content.
 
 ## Development setup
 
-Prerequisites: Node 20+, Python 3.11+, [`pnpm`](https://pnpm.io), [`uv`](https://docs.astral.sh/uv/).
+Prerequisites: Node 20+, Python 3.12+, [`pnpm`](https://pnpm.io), [`uv`](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/thewell/thewell
+git clone https://github.com/thewell-law/thewell
 cd thewell
 pnpm install
 ```
 
-Site (once scaffolded):
+Site:
 
 ```bash
 pnpm --filter site dev
@@ -61,24 +76,14 @@ uv sync
 uv run pytest
 ```
 
-## Pull requests
+## First-time contributors
 
-- Branch from `main`.
-- Keep PRs focused — one concern per PR.
-- Add or update tests for code changes.
-- Add or update citations for data changes.
-- Link the issue you're closing, if any.
+If this is your first open-source contribution anywhere, read the editorial line above and skim [`docs/anonymity.md`](./docs/anonymity.md) and [`docs/threat-model.md`](./docs/threat-model.md). They frame why this project has the constraints it has.
 
-## Data changes
+Good first issues:
 
-YAML data lives under `data/`. A PR that changes data should:
+- Data corrections in jurisdictions we already cover.
+- Extractor fixtures that exercise an edge case.
+- Documentation typos and clarity improvements.
 
-- Cite every changed field (primary source preferred).
-- Leave a brief note in the PR body explaining the change.
-- Not delete historical information unless it was incorrect — prefer marking fields as superseded.
-
-Schema is documented in [`docs/schema.md`](./docs/schema.md).
-
-## Questions
-
-Open a discussion or an issue. For security matters, use [SECURITY.md](./SECURITY.md).
+Ask in a GitHub Discussion before investing hours in a large PR if you are unsure whether it will be accepted.

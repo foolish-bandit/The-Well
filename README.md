@@ -1,44 +1,57 @@
 # The Well
 
-An open-source, citation-backed database of judicial procedure.
+**Open-source infrastructure for judicial procedure.**
 
-The Well collects, verifies, and publishes information about how judges run their courtrooms: scheduling norms, motion practice, discovery posture, docket tempo, standing orders, and everything else that determines whether a litigant gets a fair hearing. We believe this information should be public, accurate, and owned by nobody.
+The Well is a free-to-read database of how federal and California state judges run their courtrooms — their standing orders, filing preferences, motion practice cadence, and oral argument tendencies. The data is maintained by verified California-barred attorneys who contribute observations anonymously.
 
-## Status
+Read the site: [thewell.law](https://thewell.law) *(coming soon)*
 
-Early development. Schema, scraper pipeline, and contribution flow are being designed in the open. Expect breaking changes.
+## Why
 
-## What's here
+Every senior litigator keeps a mental file on each judge they appear before: page-limit strictness, whether chambers takes phone calls, how long oral argument really runs. Junior attorneys walk into those same courtrooms blind.
 
-- `site/` — Astro static site, rendered from YAML judge data.
-- `scrapers/` — Python extractors that turn court documents into structured data.
-- `data/` — YAML judge records (CC-BY-SA 4.0).
-- `scripts/` — Build, validation, and operational tooling.
-- `docs/` — Architecture, threat model, methodology, governance.
+The information is public. Standing orders are published on court websites. Local rules are free. But finding, reading, and cross-referencing those documents for 150 judges takes a week of work nobody has time to do. So the knowledge stays locked in senior partners' heads and gets passed down by oral tradition.
 
-## How it works
+The Well changes that. Every published standing order is aggregated, parsed, and linked. Every field is sourced. Verified attorneys contribute their observations anonymously, and aggregated results appear on the public site.
 
-Public reads are static HTML. Every judge page is pre-rendered from YAML at build time and served from Cloudflare's edge. No database call sits on the read path.
+## What's in this repo
 
-Contributions flow through a small Cloudflare Workers API into a D1 database, kept separate from the identity database. Authentication is handled by Clerk. See [`docs/architecture.md`](./docs/architecture.md).
+- `data/judges/` — the judge cards. YAML, CC-BY-SA 4.0.
+- `scrapers/` — one scraper per jurisdiction. AGPL-3.0.
+- `site/` — the Astro site that renders `data/` into a browsable reference.
+- `docs/` — architecture, threat model, methodology, governance.
+
+What's *not* in this repo: the operational infrastructure that handles contributor identity (private repo), any secrets, or any code path that could re-identify a contributor.
 
 ## Licenses
 
-- **Code** — [AGPL-3.0-only](./LICENSE)
-- **Data** (everything under `data/`) — [CC-BY-SA 4.0](./LICENSE-DATA)
-
-The license split is deliberate: the code should stay free even when operated as a service, and the data should be freely reusable with attribution and share-alike.
+- **Code:** [AGPL-3.0](./LICENSE). If you run a modified version as a web service, you must publish your modifications under the same license.
+- **Data & schema:** [CC-BY-SA 4.0](./LICENSE-DATA). Attribute The Well and share derivative datasets under the same license.
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md). Contributors can remain pseudonymous — see [`docs/anonymity.md`](./docs/anonymity.md) for what that guarantees and where the limits are.
+Four ways to help:
 
-## Security and transparency
+1. **Add a jurisdiction.** See [CONTRIBUTING.md](./CONTRIBUTING.md).
+2. **Improve an extractor.** Open a PR against `scrapers/common/extractors.py`.
+3. **Correct a judge card.** File an issue with the `data:correction` label or open a PR against the YAML.
+4. **Contribute as an attorney.** California-barred attorneys can apply at [thewell.law/contribute](https://thewell.law/contribute) (coming soon). Applications are manually reviewed.
 
-- Vulnerabilities: [SECURITY.md](./SECURITY.md).
-- Legal process: [CANARY.md](./CANARY.md).
-- Threat model: [`docs/threat-model.md`](./docs/threat-model.md).
+## What we don't do
 
-## Code of Conduct
+- We do not publish subjective opinions about judges.
+- We do not log IP addresses on contributor-facing endpoints.
+- We do not run analytics or session replay on those pages.
+- We do not link specific contributions to specific contributors, architecturally. See [docs/anonymity.md](./docs/anonymity.md).
 
-[Contributor Covenant v2.1](./CODE_OF_CONDUCT.md) applies to all project spaces.
+## Security
+
+Please report security issues per [SECURITY.md](./SECURITY.md). We run a bug bounty with cash rewards for legitimate findings.
+
+## Warrant canary
+
+See [CANARY.md](./CANARY.md). Updated weekly.
+
+## About
+
+The Well is maintained by Zack Pearson and the open-source community. It is operated by The Well Legal Inc., a Delaware C-corporation separate from any other entity.
