@@ -8,5 +8,10 @@ dist/
 __pycache__/
 *.pyc
 .venv/
+.uv/
 site/dist/
 .astro/
+.cache/
+scrapers/*/.cache/
+*.sqlite
+*.db

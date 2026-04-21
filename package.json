@@ -6,7 +6,7 @@
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thewell/thewell.git"
+    "url": "https://github.com/thewell-law/thewell.git"
   },
   "engines": {
     "node": ">=20"
