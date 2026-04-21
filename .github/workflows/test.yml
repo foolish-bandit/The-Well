@@ -19,9 +19,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile || pnpm install
       - name: Test
-        run: pnpm -r run test --if-present
+        run: pnpm -r --if-present run test
       - name: Build
-        run: pnpm -r run build --if-present
+        run: pnpm -r --if-present run build
 
   scrapers:
     name: Scrapers (uv)
