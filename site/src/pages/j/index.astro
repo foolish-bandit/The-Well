@@ -1,26 +1,46 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getJurisdictions } from '../../lib/judges';
+import { getAllJudges, getJurisdictions, jurisdictionName } from '../../lib/judges';
 
 const jurisdictions = getJurisdictions();
+const judges = getAllJudges();
 ---
 <Base title="Judges" description="Browse judges by jurisdiction.">
-  <h1 class="text-3xl mb-6">Judges</h1>
+  <article class="reference-page">
+    <header class="page-heading">
+      <h1>Judges</h1>
+      <p>
+        This index lists published judge procedure pages by jurisdiction. Early
+        records may include reference data while live jurisdiction coverage is
+        prepared.
+      </p>
+    </header>
   {jurisdictions.length === 0 ? (
     <p style="color: var(--color-muted)">
       Judge pages are not yet published. The first jurisdiction (S.D. Cal.) is
       in preparation.
     </p>
   ) : (
-    <ul>
+    <div class="index-list">
       {jurisdictions.map((j) => (
-        <li class="mb-2">
-          <a href={`/j/${j.slug}/`}>{j.name}</a>
-          <span class="ml-2 text-sm" style="color: var(--color-muted)">
-            ({j.count})
-          </span>
-        </li>
+        <section>
+          <h2>{j.name}</h2>
+          <p>{j.count} published judge{j.count === 1 ? '' : 's'}</p>
+          <ul class="judge-link-list">
+            {judges
+              .filter((judge) => judge.jurisdiction === j.slug)
+              .map((judge) => (
+                <li>
+                  <a href={`/j/${judge.jurisdiction}/${judge.slug}/`}>
+                    {judge.honorific ?? 'Hon.'} {judge.name}
+                  </a>
+                  <span>{judge.status} - {jurisdictionName(judge.jurisdiction)}</span>
+                </li>
+              ))}
+          </ul>
+        </section>
       ))}
-    </ul>
+    </div>
   )}
+  </article>
 </Base>

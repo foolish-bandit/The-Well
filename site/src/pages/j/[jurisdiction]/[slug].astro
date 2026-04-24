@@ -1,0 +1,114 @@
+---
+import Base from '../../../layouts/Base.astro';
+import JudgeSection from '../../../components/JudgeSection.astro';
+import {
+  formatFieldValue,
+  getAllJudges,
+  labelForField,
+  type Judge,
+  type Source,
+} from '../../../lib/judges';
+
+export function getStaticPaths() {
+  return getAllJudges().map((judge) => ({
+    params: {
+      jurisdiction: judge.jurisdiction,
+      slug: judge.slug,
+    },
+    props: { judge },
+  }));
+}
+
+const { judge } = Astro.props as { judge: Judge };
+const sourceByField = new Map(judge.sources.map((source) => [source.field_key, source]));
+const proceduralEntries = Object.entries(judge.procedural).filter(
+  ([, value]) => value !== undefined,
+);
+
+function sourceLabel(source?: Source): string {
+  if (!source) return 'Source pending';
+  if (source.confidence === 'community_aggregated') return 'Aggregated';
+  if (source.confidence === 'verified') return 'Verified';
+  return 'Extracted';
+}
+---
+<Base
+  title={judge.name}
+  description={`${judge.name} procedure notes, standing orders, and sourced courtroom preferences.`}
+>
+  <article class="reference-page judge-page">
+    <header class="page-heading">
+      <p class="page-kicker">{judge.court_name}</p>
+      <h1>{judge.honorific ?? 'Hon.'} {judge.name}</h1>
+      <p>
+        {judge.status} judge
+        {judge.chambers_location ? ` - ${judge.chambers_location}` : ''}
+      </p>
+    </header>
+
+    <section class="summary-box" aria-label="Judge page summary">
+      <h2>Summary</h2>
+      <dl>
+        <dt>Standing orders</dt>
+        <dd>{judge.standing_orders.length}</dd>
+        <dt>Sourced fields</dt>
+        <dd>{judge.sources.length}</dd>
+        <dt>Last review</dt>
+        <dd>{judge.last_editor_review_at?.slice(0, 10) ?? judge.updated_at.slice(0, 10)}</dd>
+      </dl>
+    </section>
+
+    {judge.bio_notes && <p class="mt-6">{judge.bio_notes}</p>}
+
+    <JudgeSection title="Procedure">
+      <div class="field-table" role="table">
+        {proceduralEntries.map(([field, value]) => {
+          const source = sourceByField.get(field);
+          return (
+            <div class="field-row" role="row">
+              <div role="cell">
+                <strong>{labelForField(field)}</strong>
+                <span>{sourceLabel(source)}</span>
+              </div>
+              <div role="cell">
+                <p>{formatFieldValue(value)}</p>
+                {source?.source_excerpt && <blockquote>{source.source_excerpt}</blockquote>}
+                {source?.source_url && (
+                  <a href={source.source_url} rel="noopener">Source</a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </JudgeSection>
+
+    <JudgeSection title="Standing Orders">
+      <div class="index-list">
+        {judge.standing_orders.map((order) => (
+          <article>
+            <h3><a href={order.url} rel="noopener">{order.title}</a></h3>
+            <p>
+              Effective {order.effective_date ?? 'date not listed'}.
+              Last fetched {order.last_fetched_at.slice(0, 10)}.
+            </p>
+            {order.topics && (
+              <p class="tag-row">
+                {order.topics.map((topic) => <span>{formatFieldValue(topic)}</span>)}
+              </p>
+            )}
+          </article>
+        ))}
+      </div>
+    </JudgeSection>
+
+    <JudgeSection title="Chambers">
+      <dl class="detail-list">
+        {judge.courtroom && <><dt>Courtroom</dt><dd>{judge.courtroom}</dd></>}
+        {judge.chambers_email && <><dt>Chambers email</dt><dd><a href={`mailto:${judge.chambers_email}`}>{judge.chambers_email}</a></dd></>}
+        {judge.proposed_order_email && <><dt>Proposed orders</dt><dd><a href={`mailto:${judge.proposed_order_email}`}>{judge.proposed_order_email}</a></dd></>}
+        {judge.appointed_by && <><dt>Appointed by</dt><dd>{judge.appointed_by}{judge.appointed_year ? `, ${judge.appointed_year}` : ''}</dd></>}
+      </dl>
+    </JudgeSection>
+  </article>
+</Base>

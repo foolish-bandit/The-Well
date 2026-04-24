@@ -17,7 +17,7 @@ const {
 } = Astro.props;
 
 const siteName = 'The Well';
-const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
+const fullTitle = title === siteName ? title : `${title} - ${siteName}`;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 ---
 <!doctype html>
@@ -42,23 +42,19 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
     )}
   </head>
   <body class="min-h-screen flex flex-col">
-    <header
-      class="border-b"
-      style="border-color: var(--color-rule)"
-      data-print-hide
-    >
-      <div class="max-w-3xl mx-auto px-6 py-6 flex items-baseline justify-between">
-        <a href="/" class="font-sans font-semibold text-lg no-underline" style="color: var(--color-fg)">
+    <header class="site-header" data-print-hide>
+      <div class="site-shell flex items-center justify-between gap-6 py-3">
+        <a href="/" class="brand-mark">
           The Well
         </a>
-        <nav class="font-sans text-sm">
-          <a href="/j/" class="mr-4">Judges</a>
-          <a href="/about/" class="mr-4">About</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/j/">Judges</a>
+          <a href="/about/">About</a>
           <a href="/contribute/">Contribute</a>
         </nav>
       </div>
     </header>
-    <main class="flex-1 max-w-3xl w-full mx-auto px-6 py-10">
+    <main class="flex-1 site-shell py-10 md:py-14">
       <slot />
     </main>
     <Footer />

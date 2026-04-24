@@ -11,6 +11,7 @@ __pycache__/
 .uv/
 .pytest_cache/
 site/dist/
+site/astro-dev*.log
 .astro/
 .cache/
 scrapers/*/.cache/
