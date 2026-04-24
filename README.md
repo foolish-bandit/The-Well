@@ -54,4 +54,4 @@ See [CANARY.md](./CANARY.md). Updated weekly.
 
 ## About
 
-The Well is maintained by Zack Pearson and the open-source community. It is operated by The Well Legal Inc., a Delaware C-corporation separate from any other entity.
+The Well is maintained by Zachary Brenner and the open-source community.
