@@ -1,0 +1,50 @@
+# Real judge entry — biographical and standing-order index only.
+#
+# Procedural fields are intentionally left blank pending the CASD
+# scraper. Standing-order URLs were located via public search of the
+# court website on the date in last_fetched_at; the linked PDFs have
+# not been parsed yet, so no procedural extraction appears here.
+
+id: casd-jinsook-ohta
+slug: jinsook-ohta
+name: Jinsook Ohta
+honorific: "Hon."
+jurisdiction: casd
+court_name: "U.S. District Court, Southern District of California"
+court_type: federal_district
+status: active
+chambers_location: "San Diego — Edward J. Schwartz United States Courthouse"
+appointed_by: "Joe Biden"
+appointed_year: 2021
+prior_practice:
+  - "Law clerk to Hon. Barry Ted Moskowitz, U.S. District Court, Southern District of California"
+  - "California Department of Justice, Consumer Protection Section (Deputy Attorney General, 2011–2019; Supervising Deputy Attorney General, 2019–2020)"
+  - "San Diego County Superior Court (judge, 2020–2021)"
+law_school: "New York University School of Law"
+undergrad: "Yale University"
+bio_notes: >-
+  United States District Judge for the Southern District of California.
+  Confirmed by the Senate on December 17, 2021 by a 47–24 vote on
+  nomination from President Joe Biden, becoming the first Asian
+  American woman to serve as an Article III judge in this district.
+  Prior service includes the San Diego County Superior Court and a
+  decade in the consumer-protection section of the California
+  Attorney General's Office.
+created_at: "2026-04-28T00:00:00Z"
+updated_at: "2026-04-28T00:00:00Z"
+
+standing_orders:
+  - title: "Civil Chambers Rules"
+    effective_date: "2026-04-06"
+    url: "https://www.casd.uscourts.gov/judges/ohta/docs/Ohta%20Chambers%20Civil%20Rules.pdf"
+    last_fetched_at: "2026-04-28T00:00:00Z"
+
+procedural: {}
+
+sources:
+  - field_key: standing_orders
+    source_type: standing_order
+    source_url: "https://www.casd.uscourts.gov/judges/ohta/docs/Ohta%20Chambers%20Civil%20Rules.pdf"
+    source_excerpt: "Document indexed; not yet parsed for procedural fields."
+    confidence: verified
+    last_verified_at: "2026-04-28T00:00:00Z"

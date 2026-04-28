@@ -1,0 +1,47 @@
+# Real judge entry — biographical and standing-order index only.
+#
+# Procedural fields are intentionally left blank pending the CASD
+# scraper. Standing-order URLs were located via public search of the
+# court website on the date in last_fetched_at; the linked PDFs have
+# not been parsed yet, so no procedural extraction appears here.
+
+id: casd-linda-lopez
+slug: linda-lopez
+name: Linda Lopez
+honorific: "Hon."
+jurisdiction: casd
+court_name: "U.S. District Court, Southern District of California"
+court_type: federal_district
+status: active
+chambers_location: "San Diego — Edward J. Schwartz United States Courthouse"
+appointed_by: "Joe Biden"
+appointed_year: 2021
+prior_practice:
+  - "Private criminal-defense practice in Florida (firm and solo)"
+  - "Office of the Federal Public Defender, Southern District of California (senior trial attorney, 2007–2018)"
+  - "U.S. Magistrate Judge, Southern District of California (2018–2021)"
+law_school: "University of Miami School of Law"
+undergrad: "Florida International University"
+bio_notes: >-
+  United States District Judge for the Southern District of California.
+  Received her judicial commission on December 21, 2021 on nomination
+  from President Joe Biden. Served as a U.S. Magistrate Judge in the
+  same district from October 2018 until elevation. Earlier career was
+  in federal criminal defense.
+created_at: "2026-04-28T00:00:00Z"
+updated_at: "2026-04-28T00:00:00Z"
+
+standing_orders:
+  - title: "Civil Chambers Rules"
+    url: "https://www.casd.uscourts.gov/judges/lopez/docs/Lopez%20Civil%20Chambers%20Rules.pdf"
+    last_fetched_at: "2026-04-28T00:00:00Z"
+
+procedural: {}
+
+sources:
+  - field_key: standing_orders
+    source_type: standing_order
+    source_url: "https://www.casd.uscourts.gov/judges/lopez/docs/Lopez%20Civil%20Chambers%20Rules.pdf"
+    source_excerpt: "Document indexed; not yet parsed for procedural fields."
+    confidence: verified
+    last_verified_at: "2026-04-28T00:00:00Z"

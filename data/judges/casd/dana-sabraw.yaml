@@ -1,0 +1,46 @@
+# Real judge entry — biographical and standing-order index only.
+#
+# Procedural fields are intentionally left blank pending the CASD
+# scraper. Standing-order URLs were located via public search of the
+# court website on the date in last_fetched_at; the linked PDFs have
+# not been parsed yet, so no procedural extraction appears here.
+
+id: casd-dana-sabraw
+slug: dana-sabraw
+name: Dana M. Sabraw
+honorific: "Hon."
+jurisdiction: casd
+court_name: "U.S. District Court, Southern District of California"
+court_type: federal_district
+status: active
+chambers_location: "San Diego — Edward J. Schwartz United States Courthouse"
+appointed_by: "George W. Bush"
+appointed_year: 2003
+prior_practice:
+  - "Private practice, San Diego (approximately ten years before taking the bench)"
+  - "San Diego County Municipal Court (judge, 1995–1998)"
+  - "San Diego County Superior Court (judge, 1998–2003)"
+law_school: "University of the Pacific, McGeorge School of Law"
+undergrad: "San Diego State University"
+bio_notes: >-
+  United States District Judge for the Southern District of California
+  since 2003, confirmed by the Senate 95–0 on September 25, 2003 on
+  nomination from President George W. Bush. Served as Chief Judge of
+  the district from January 22, 2021 through January 22, 2025.
+created_at: "2026-04-28T00:00:00Z"
+updated_at: "2026-04-28T00:00:00Z"
+
+standing_orders:
+  - title: "Civil Procedures"
+    url: "https://www.casd.uscourts.gov/judges/sabraw/docs/Sabraw%20Civil%20Procedures.pdf"
+    last_fetched_at: "2026-04-28T00:00:00Z"
+
+procedural: {}
+
+sources:
+  - field_key: standing_orders
+    source_type: standing_order
+    source_url: "https://www.casd.uscourts.gov/judges/sabraw/docs/Sabraw%20Civil%20Procedures.pdf"
+    source_excerpt: "Document indexed; not yet parsed for procedural fields."
+    confidence: verified
+    last_verified_at: "2026-04-28T00:00:00Z"

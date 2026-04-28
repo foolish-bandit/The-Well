@@ -1,0 +1,58 @@
+# Real judge entry — biographical and standing-order index only.
+#
+# Procedural fields are intentionally left blank pending the CASD
+# scraper. Standing-order URLs were located via public search of the
+# court website on the date in last_fetched_at; the linked PDFs have
+# not been parsed yet, so no procedural extraction appears here.
+
+id: casd-cynthia-bashant
+slug: cynthia-bashant
+name: Cynthia A. Bashant
+honorific: "Hon."
+jurisdiction: casd
+court_name: "U.S. District Court, Southern District of California"
+court_type: federal_district
+status: active
+chambers_location: "San Diego — Edward J. Schwartz United States Courthouse"
+appointed_by: "Barack Obama"
+appointed_year: 2014
+prior_practice:
+  - "MacDonald, Halsted & Laybourne (associate, 1986–1988)"
+  - "Baker & McKenzie (associate, 1988–1989)"
+  - "U.S. Attorney's Office, Southern District of California (Assistant U.S. Attorney, 1989–2000)"
+  - "San Diego County Superior Court (judge, 2000–2014)"
+law_school: "University of California, Hastings College of the Law"
+undergrad: "Smith College"
+bio_notes: >-
+  Chief Judge of the U.S. District Court for the Southern District of
+  California. Confirmed to the federal bench by the Senate on April 30,
+  2014, by a 94–0 vote, on nomination from President Barack Obama. Prior
+  service includes fourteen years on the San Diego County Superior Court
+  and eleven years as an Assistant U.S. Attorney in the Southern District
+  of California.
+created_at: "2026-04-28T00:00:00Z"
+updated_at: "2026-04-28T00:00:00Z"
+
+standing_orders:
+  - title: "Standing Order for Civil Cases"
+    url: "https://www.casd.uscourts.gov/judges/bashant/docs/Bashant%20Standing%20Order%20for%20Civil%20Cases.pdf"
+    last_fetched_at: "2026-04-28T00:00:00Z"
+  - title: "Criminal Pretrial and Trial Procedures"
+    url: "https://www.casd.uscourts.gov/judges/bashant/docs/Bashant%20Criminal%20Pretrial%20and%20Trial%20Procedures.pdf"
+    last_fetched_at: "2026-04-28T00:00:00Z"
+
+procedural: {}
+
+sources:
+  - field_key: standing_orders
+    source_type: standing_order
+    source_url: "https://www.casd.uscourts.gov/judges/bashant/docs/Bashant%20Standing%20Order%20for%20Civil%20Cases.pdf"
+    source_excerpt: "Document indexed; not yet parsed for procedural fields."
+    confidence: verified
+    last_verified_at: "2026-04-28T00:00:00Z"
+  - field_key: standing_orders
+    source_type: standing_order
+    source_url: "https://www.casd.uscourts.gov/judges/bashant/docs/Bashant%20Criminal%20Pretrial%20and%20Trial%20Procedures.pdf"
+    source_excerpt: "Document indexed; not yet parsed for procedural fields."
+    confidence: verified
+    last_verified_at: "2026-04-28T00:00:00Z"
